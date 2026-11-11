@@ -53,7 +53,9 @@ public:
 	
 	// Functions
 	UFUNCTION(BlueprintCallable, Category="Interaction")
-	void SetInteractionState(bool bState);
+	void SetComponentState(bool bState);
+	
+	void RegisterPawnEntered(APawn* Pawn);
 	
 private:
 	TWeakObjectPtr<APawn> NearbyPawn;
