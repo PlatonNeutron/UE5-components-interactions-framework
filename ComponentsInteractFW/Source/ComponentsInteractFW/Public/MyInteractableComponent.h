@@ -6,6 +6,24 @@
 #include "Components/ActorComponent.h"
 #include "MyInteractableComponent.generated.h"
 
+// Déclaration des delegates
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FOnEnterFeedback,
+	APawn*,
+	Instigator
+);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FOnExitFeedback,
+	APawn*,
+	Instigator
+);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FOnInteract,
+	APawn*,
+	Instigator
+);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class COMPONENTSINTERACTFW_API UMyInteractableComponent : public UActorComponent
@@ -15,4 +33,21 @@ class COMPONENTSINTERACTFW_API UMyInteractableComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UMyInteractableComponent();
+	
+	// Events
+	UPROPERTY(BlueprintAssignable, Category="Interaction")
+	FOnEnterFeedback OnEnterFeedback;
+	
+	UPROPERTY(BlueprintAssignable, Category="Interaction")
+	FOnExitFeedback OnExitFeedback;
+
+	UPROPERTY(BlueprintAssignable, Category="Interaction")
+	FOnInteract OnInteract;
+	
+	// Editable Properties
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category="Interaction")
+	bool bInteractionEnabled = true;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category="Interaction")
+	FText InteractionText = FText::FromString(TEXT("Interact"));
 };
