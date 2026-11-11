@@ -50,4 +50,11 @@ public:
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category="Interaction")
 	FText InteractionText = FText::FromString(TEXT("Interact"));
+	
+	// Functions
+	UFUNCTION(BlueprintCallable, Category="Interaction")
+	void SetInteractionState(bool bState);
+	
+private:
+	TWeakObjectPtr<APawn> NearbyPawn;
 };

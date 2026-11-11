@@ -5,10 +5,25 @@
 // Sets default values for this component's properties
 UMyInteractableComponent::UMyInteractableComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
+	// 
 	PrimaryComponentTick.bCanEverTick = false;
-
-	// ...
 }
 
+// Managing the state of the component
+void UMyInteractableComponent::SetInteractionState(bool bState)
+{
+	// Check if the component is in the same state as the wanted state
+	if (bInteractionEnabled == bState)
+	{
+		return;
+	}
+
+	// Change it otherwise
+	bInteractionEnabled = bState;
+	
+	// And call OnExitFeedback if the component turn false while a player is in the interaction zone
+	if (!bInteractionEnabled && NearbyPawn.IsValid())
+	{
+		OnExitFeedback.Broadcast(NearbyPawn.Get());
+	}
+}
