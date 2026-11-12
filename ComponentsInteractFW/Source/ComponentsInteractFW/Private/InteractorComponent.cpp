@@ -5,6 +5,7 @@
 #include "GameFramework/Pawn.h"
 #include "Components/SphereComponent.h"
 #include "Components/PrimitiveComponent.h"
+#include "MyInteractableComponent.h"
 
 // Sets default values for this component's properties
 UInteractorComponent::UInteractorComponent()
@@ -75,13 +76,49 @@ void UInteractorComponent::UnbindProximitySphere()
 //
 void UInteractorComponent::HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("BeginOverlap detecte !"));
+	if (!IsValid(OtherActor))
+	{
+		return;
+	}
+
+	UMyInteractableComponent* Interactable =
+		OtherActor->FindComponentByClass<UMyInteractableComponent>();
+
+	if (!IsValid(Interactable))
+	{
+		return;
+	}
+
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("Objet interactif detecte : %s"),
+		*OtherActor->GetName()
+	);
 }
 
 //
 void UInteractorComponent::HandleEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	UE_LOG(LogTemp, Warning, TEXT("EndOverlap detecte !"));
+	if (!IsValid(OtherActor))
+	{
+		return;
+	}
+
+	UMyInteractableComponent* Interactable =
+		OtherActor->FindComponentByClass<UMyInteractableComponent>();
+
+	if (!IsValid(Interactable))
+	{
+		return;
+	}
+
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("EndOverlap avec : %s"),
+		*OtherActor->GetName()
+	);
 }
 
 
