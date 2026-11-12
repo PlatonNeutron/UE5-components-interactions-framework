@@ -25,7 +25,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
 	Instigator
 );
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(InteractionFW), meta=(BlueprintSpawnableComponent) )
 class COMPONENTSINTERACTFW_API UMyInteractableComponent : public UActorComponent
 {
 	GENERATED_BODY()
