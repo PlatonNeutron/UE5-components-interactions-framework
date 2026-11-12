@@ -10,18 +10,6 @@ UMyInteractableComponent::UMyInteractableComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-// Register that a player entered in an interaction zone
-void UMyInteractableComponent::RegisterPawnEntered(APawn* Pawn)
-{
-	if (!IsValid(Pawn) || !bInteractionEnabled)
-	{
-		return;
-	}
-
-	NearbyPawn = Pawn;
-	OnEnterFeedback.Broadcast(Pawn);
-}
-
 // Managing the state of the component
 void UMyInteractableComponent::SetComponentState(bool bState)
 {
@@ -39,4 +27,37 @@ void UMyInteractableComponent::SetComponentState(bool bState)
 	{
 		OnExitFeedback.Broadcast(NearbyPawn.Get());
 	}
+}
+
+// 
+// Notify all subscribers that a player entered in an interaction zone
+void UMyInteractableComponent::NotifyPawnEntered(APawn* Pawn)
+{
+	// Check if the interaction is possible
+	if (!IsValid(Pawn) || !bInteractionEnabled)
+	{
+		return;
+	}
+	
+	// Check if the interaction doesn't have already been processed
+	if (NearbyPawn.Get() == Pawn)
+	{
+		return;
+	}
+
+	NearbyPawn = Pawn;
+	OnEnterFeedback.Broadcast(Pawn);
+}
+
+// Notify all subscribers that a player exited an interaction zone
+void UMyInteractableComponent::NotifyPawnExited(APawn* Pawn)
+{
+	if (!NearbyPawn.IsValid() || NearbyPawn.Get() != Pawn)
+	{
+		return;
+	}
+
+	NearbyPawn.Reset();
+
+	OnExitFeedback.Broadcast(Pawn);
 }
