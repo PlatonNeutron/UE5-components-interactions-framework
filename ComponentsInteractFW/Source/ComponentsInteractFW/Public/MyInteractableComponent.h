@@ -45,7 +45,7 @@ public:
 	FOnInteract OnInteract;
 	
 	// Editable Properties
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category="Interaction")
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category="Interaction")
 	bool bInteractionEnabled = true;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category="Interaction")
@@ -60,4 +60,5 @@ public:
 	
 private:
 	TWeakObjectPtr<APawn> NearbyPawn;
+	bool bFeedbackActive = true;
 };

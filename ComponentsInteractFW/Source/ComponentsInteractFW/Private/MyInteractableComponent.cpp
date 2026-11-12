@@ -22,9 +22,16 @@ void UMyInteractableComponent::SetComponentState(bool bState)
 	// Change it otherwise
 	bInteractionEnabled = bState;
 	
-	// And call OnExitFeedback if the component turn false while a player is in the interaction zone
-	if (!bInteractionEnabled && NearbyPawn.IsValid())
+	// Call OnEnterFeedback if the component turn true while a player is in the interaction zone
+	if (bInteractionEnabled && !bFeedbackActive)
 	{
+		bFeedbackActive = true;
+		OnEnterFeedback.Broadcast(NearbyPawn.Get());
+	}
+	// And call OnExitFeedback if the component turn false while a player is in the interaction zone
+	else if (!bInteractionEnabled && bFeedbackActive)
+	{
+		bFeedbackActive = false;
 		OnExitFeedback.Broadcast(NearbyPawn.Get());
 	}
 }
@@ -52,17 +59,19 @@ void UMyInteractableComponent::NotifyPawnEntered(APawn* Pawn)
 // Notify all subscribers that a player exited an interaction zone
 void UMyInteractableComponent::NotifyPawnExited(APawn* Pawn)
 {
-	// Check if the player is in the interaction zone
+	// Check if the player is not in the interaction zone
 	if (!NearbyPawn.IsValid() || NearbyPawn.Get() != Pawn)
 	{
 		return;
 	}
+	
+	// Check if the interaction doesn't have already been disabled
+	if (!bInteractionEnabled)
+	{
+		NearbyPawn.Reset();
+		return;
+	}
 
 	NearbyPawn.Reset();
-
-	// Check if the component doesn't have already been disabled and OnExitFeedback been called
-	if (bInteractionEnabled)
-	{
-		OnExitFeedback.Broadcast(Pawn);
-	}
+	OnExitFeedback.Broadcast(Pawn);
 }
