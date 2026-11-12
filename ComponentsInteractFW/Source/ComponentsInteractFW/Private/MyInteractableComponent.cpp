@@ -52,6 +52,7 @@ void UMyInteractableComponent::NotifyPawnEntered(APawn* Pawn)
 // Notify all subscribers that a player exited an interaction zone
 void UMyInteractableComponent::NotifyPawnExited(APawn* Pawn)
 {
+	// Check if the player is in the interaction zone
 	if (!NearbyPawn.IsValid() || NearbyPawn.Get() != Pawn)
 	{
 		return;
@@ -59,5 +60,9 @@ void UMyInteractableComponent::NotifyPawnExited(APawn* Pawn)
 
 	NearbyPawn.Reset();
 
-	OnExitFeedback.Broadcast(Pawn);
+	// Check if the component doesn't have already been disabled and OnExitFeedback been called
+	if (bInteractionEnabled)
+	{
+		OnExitFeedback.Broadcast(Pawn);
+	}
 }
