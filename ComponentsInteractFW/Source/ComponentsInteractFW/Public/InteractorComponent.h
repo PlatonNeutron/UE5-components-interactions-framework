@@ -7,6 +7,7 @@
 #include "InteractorComponent.generated.h"
 
 class APawn;
+class USphereComponent;
 
 UCLASS( ClassGroup=(InteractionFW), meta=(BlueprintSpawnableComponent) )
 class COMPONENTSINTERACTFW_API UInteractorComponent : public UActorComponent
@@ -17,8 +18,16 @@ public:
 	// Sets default values for this component's properties
 	UInteractorComponent();
 	
+protected:
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
 private:
 	TWeakObjectPtr<APawn> CurrentPawn;
+	TWeakObjectPtr<USphereComponent> ProximitySphere;
 	
-	void UpdateCurrentPawn();
+	UFUNCTION()
+	void HandlePossessedPawnChanged(APawn* OldPawn, APawn* NewPawn);
+	
+	void UpdateProximitySphere();
 };
