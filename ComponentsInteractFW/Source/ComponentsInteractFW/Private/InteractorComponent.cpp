@@ -18,6 +18,7 @@ UInteractorComponent::UInteractorComponent()
 void UInteractorComponent::HandlePossessedPawnChanged(APawn* OldPawn, APawn* NewPawn)
 {
 	CurrentPawn = NewPawn;
+	UpdateProximitySphere();
 }
 
 
@@ -63,6 +64,8 @@ void UInteractorComponent::BeginPlay()
 	
 	// Initializing the pawn
 	CurrentPawn = PlayerController->GetPawn();
+	// Initializing the Proximity Sphere
+	UpdateProximitySphere();
 }
 
 void UInteractorComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
