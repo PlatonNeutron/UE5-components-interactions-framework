@@ -11,6 +11,7 @@ class APawn;
 class USphereComponent;
 class UPrimitiveComponent;
 class AActor;
+class UMyInteractableComponent;
 
 // 
 UCLASS( ClassGroup=(InteractionFW), meta=(BlueprintSpawnableComponent) )
@@ -29,6 +30,9 @@ protected:
 private:
 	TWeakObjectPtr<APawn> CurrentPawn;
 	TWeakObjectPtr<USphereComponent> ProximitySphere;
+	TSet<TWeakObjectPtr<UMyInteractableComponent>> NearbyInteractables;
+	TWeakObjectPtr<UMyInteractableComponent> FocusedInteractable;
+	bool FindLookedAtInteractable(UMyInteractableComponent*& OutInteractable) const;
 	
 	UFUNCTION()
 	void HandlePossessedPawnChanged(APawn* OldPawn, APawn* NewPawn);
@@ -39,7 +43,12 @@ private:
 	UFUNCTION()
 	void HandleEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	
+	UFUNCTION()
+	void HandleInteractableDestroyed(AActor* DestroyedActor);
+	
 	void UpdateProximitySphere();
 	void BindProximitySphere();
 	void UnbindProximitySphere();
+	void CleanupInvalidInteractables();
+	void ClearNearbyInteractables();
 };
