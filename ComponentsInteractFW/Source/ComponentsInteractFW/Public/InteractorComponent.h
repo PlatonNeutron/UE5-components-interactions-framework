@@ -6,9 +6,13 @@
 #include "Components/ActorComponent.h"
 #include "InteractorComponent.generated.h"
 
+// Anticipated declarations
 class APawn;
 class USphereComponent;
+class UPrimitiveComponent;
+class AActor;
 
+// 
 UCLASS( ClassGroup=(InteractionFW), meta=(BlueprintSpawnableComponent) )
 class COMPONENTSINTERACTFW_API UInteractorComponent : public UActorComponent
 {
@@ -29,5 +33,13 @@ private:
 	UFUNCTION()
 	void HandlePossessedPawnChanged(APawn* OldPawn, APawn* NewPawn);
 	
+	UFUNCTION()
+	void HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
+	UFUNCTION()
+	void HandleEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	
 	void UpdateProximitySphere();
+	void BindProximitySphere();
+	void UnbindProximitySphere();
 };

@@ -25,6 +25,7 @@ void UInteractorComponent::HandlePossessedPawnChanged(APawn* OldPawn, APawn* New
 // SPHERE
 void UInteractorComponent::UpdateProximitySphere()
 {
+	UnbindProximitySphere();
 	ProximitySphere.Reset();
 
 	if (!CurrentPawn.IsValid())
@@ -40,9 +41,47 @@ void UInteractorComponent::UpdateProximitySphere()
 		if (IsValid(Sphere) && Sphere->ComponentHasTag(TEXT("InteractionProximity")))
 		{
 			ProximitySphere = Sphere;
+			BindProximitySphere();
 			return;
 		}
 	}
+}
+
+//
+void UInteractorComponent::BindProximitySphere()
+{
+	if (!ProximitySphere.IsValid())
+	{
+		return;
+	}
+
+	ProximitySphere->OnComponentBeginOverlap.AddUniqueDynamic(this, &UInteractorComponent::HandleBeginOverlap);
+	ProximitySphere->OnComponentEndOverlap.AddUniqueDynamic(this, &UInteractorComponent::HandleEndOverlap);
+}
+
+//
+void UInteractorComponent::UnbindProximitySphere()
+{
+	if (!ProximitySphere.IsValid())
+	{
+		return;
+	}
+
+	ProximitySphere->OnComponentBeginOverlap.RemoveDynamic(this, &UInteractorComponent::HandleBeginOverlap);
+	ProximitySphere->OnComponentEndOverlap.RemoveDynamic(this, &UInteractorComponent::HandleEndOverlap);
+}
+
+
+//
+void UInteractorComponent::HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	UE_LOG(LogTemp, Warning, TEXT("BeginOverlap detecte !"));
+}
+
+//
+void UInteractorComponent::HandleEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	UE_LOG(LogTemp, Warning, TEXT("EndOverlap detecte !"));
 }
 
 
@@ -78,7 +117,9 @@ void UInteractorComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		// Unsub of OnPossessedPawnChanged
 		PlayerController->OnPossessedPawnChanged.RemoveDynamic(this, &UInteractorComponent::HandlePossessedPawnChanged);
 	}
-
+	
 	CurrentPawn.Reset();
+	UpdateProximitySphere();
+	
 	Super::EndPlay(EndPlayReason);
 }
