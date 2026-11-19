@@ -246,7 +246,7 @@ bool UInteractorComponent::FindLookedAtInteractable(UMyInteractableComponent*& O
 		TraceStart,
 		TraceEnd,
 		FQuat::Identity,
-		ECC_Visibility,
+		ECC_GameTraceChannel1,
 		FCollisionShape::MakeSphere(15.0f),
 		QueryParams
 	);
