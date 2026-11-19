@@ -23,6 +23,9 @@ public:
 	// Sets default values for this component's properties
 	UInteractorComponent();
 	
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	void Interact();
+	
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;

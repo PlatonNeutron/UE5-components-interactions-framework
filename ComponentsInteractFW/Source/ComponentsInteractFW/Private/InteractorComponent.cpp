@@ -165,7 +165,7 @@ void UInteractorComponent::HandleInteractableDestroyed(AActor* DestroyedActor)
 }
 
 
-//
+// Interactor Logic
 // Fait avec IA plus le temps et trop fatigué pour y arriver seul
 void UInteractorComponent::ClearNearbyInteractables()
 {
@@ -207,12 +207,12 @@ void UInteractorComponent::CleanupInvalidInteractables()
 	}
 }
 
-
-//
+// Determine if the player look at an interactable
 bool UInteractorComponent::FindLookedAtInteractable(UMyInteractableComponent*& OutInteractable) const
 {
 	OutInteractable = nullptr;
 
+	// Vérifications usuelles
 	if (!CurrentPawn.IsValid())
 	{
 		return false;
@@ -225,21 +225,22 @@ bool UInteractorComponent::FindLookedAtInteractable(UMyInteractableComponent*& O
 		return false;
 	}
 
+	// Récupération des infos de caméras
 	FVector CameraLocation;
 	FRotator CameraRotation;
-
+	
 	PC->GetPlayerViewPoint(CameraLocation, CameraRotation);
 
+	// Trace
 	const FVector TraceStart = CameraLocation;
-
-	const FVector TraceEnd =
-		TraceStart + CameraRotation.Vector() * 500.0f;
+	const FVector TraceEnd = TraceStart + CameraRotation.Vector() * 500.0f;
 
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(CurrentPawn.Get());
 
 	FHitResult HitResult;
 
+	// Génération de la Trace
 	const bool bHit = GetWorld()->SweepSingleByChannel(
 		HitResult,
 		TraceStart,
@@ -249,16 +250,17 @@ bool UInteractorComponent::FindLookedAtInteractable(UMyInteractableComponent*& O
 		FCollisionShape::MakeSphere(15.0f),
 		QueryParams
 	);
-
+	
+	// Vérif si trace valide ou si pas eu de hit
 	if (!bHit || !IsValid(HitResult.GetActor()))
 	{
 		return false;
 	}
 
-	UMyInteractableComponent* Interactable =
-		HitResult.GetActor()
-		->FindComponentByClass<UMyInteractableComponent>();
+	// Récupération de l'intéractable hited
+	UMyInteractableComponent* Interactable = HitResult.GetActor()->FindComponentByClass<UMyInteractableComponent>();
 
+	// vérifs
 	if (!IsValid(Interactable))
 	{
 		return false;
@@ -273,10 +275,30 @@ bool UInteractorComponent::FindLookedAtInteractable(UMyInteractableComponent*& O
 	{
 		return false;
 	}
-
+	
 	OutInteractable = Interactable;
 
 	return true;
+}
+
+// Callable function
+void UInteractorComponent::Interact()
+{
+	UMyInteractableComponent* Interactable = nullptr;
+
+	if (!FindLookedAtInteractable(Interactable))
+	{
+		return;
+	}
+
+	if (!IsValid(Interactable) || !CurrentPawn.IsValid())
+	{
+		return;
+	}
+
+	Interactable->OnInteract.Broadcast(CurrentPawn.Get());
+
+	UE_LOG(LogTemp, Warning, TEXT("Interaction avec : %s"), *Interactable->GetOwner()->GetName());
 }
 
 // UNREAL
